@@ -1,7 +1,16 @@
 var express = require('express');
+var mongoose = require('mongoose');
+var bodyParser = require('body-parser')
 var app = express();
 var router = express.Router();
 app.set('port', (process.env.PORT || 5000));
+//app.set('env',config.environment);
+console.log("Env : ",process.env.DB_URL);
+//mongodb://schoolspideradmin:Password1@ds149603.mlab.com:49603/schoolspiderdb
+
+mongoose.connect(process.env.DB_URL); // connect to our database
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('public'));
 app.use(function (req, res, next) {
     // Website you wish to allow to connect
