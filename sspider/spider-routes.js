@@ -58,4 +58,70 @@ router.post('/getData', function(req, res) {
     }
 });
 
+router.post('/getDataDistinct', function(req, res) {
+    var param  = req.body;
+    console.log("req",JSON.stringify(param.query));
+
+    /*
+    {
+        "distinct":"subject",
+        "query":{
+            "qtype" : "single-select"
+        }
+    }
+    */
+    try{
+        var promise = Books.distinct(param.distinct,{}).exec();
+        promise.then(function (books) {
+            return res.status(200).send(books);
+        }).then(null, function (err) {
+            return res.status(400).send("Invalid paramter.");
+        });
+    }catch(err){
+        return res.status(400).send("Invalid paramter.",err);
+    }
+});
+
+router.post('/getDataAggregate', function(req, res) {
+    var param  = req.body;
+    console.log("req",JSON.stringify(param.query));
+
+    /*
+    {
+        "query":[
+                {
+                    "$group":{
+                            "_id": "$class",
+                            "id": { "$first": "$_id" }
+                        }
+                },
+                {
+                "$project":{
+                    "_id":"$id",
+                    "class":"$_id",
+                    "subject":"$_id",
+                    "lesson":"$_id"
+                    }
+                } ,
+                {
+                "$sort":{
+                            "class":1
+                    }
+                }  
+            ]
+        
+    }
+    */
+    try{
+        var promise = Books.aggregate(param.query).exec();
+        promise.then(function (books) {
+            return res.status(200).send(books);
+        }).then(null, function (err) {
+            return res.status(400).send("Invalid paramter.");
+        });
+    }catch(err){
+        return res.status(400).send("Invalid paramter.",err);
+    }
+});
+
 module.exports = router;

@@ -1,0 +1,28 @@
+db.getCollection('books').distinct( "subject",{"qtype":"single-select"})
+
+var ar = db.getCollection('books').distinct( "subject",{"qtype":"single-select"});
+db.getCollection('books').find({"subject":{$in:ar}});
+
+
+
+db.getCollection('books').aggregate([
+    {
+        "$group":{
+                "_id": "$class",
+                "id": { "$first": "$_id" }
+            }
+    },
+    {
+      "$project":{
+          "_id":"$id",
+          "class":"$_id",
+          "subject":"$_id",
+          "lesson":"$_id"
+          }
+      } ,
+    {
+      "$sort":{
+                "class":1
+          }
+      }  
+])
